@@ -1,0 +1,13 @@
+{
+  "python": "3.11.2",
+  "dependencies": {
+    "ViennaRNA": "2.7.2",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "reedsolo": "1.7.0",
+    "Cython": "3.2.4",
+    "tqdm": "4.67.3",
+    "setuptools": "65.5.0"
+  },
+  "note": "Software versions in the validation environment; the original experiment environment was not separately recorded."
+}
