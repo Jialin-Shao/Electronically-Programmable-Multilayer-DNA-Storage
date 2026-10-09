@@ -130,4 +130,4 @@ DNA Fountain was developed by Yaniv Erlich and Dina Zielinski: https://github.co
 
 The candidate mapping table is distributed as three independently readable gzip-compressed TSV files, each containing a header and 100,000 records. Parts 001, 002 and 003 cover `candidate_000001`–`candidate_100000`, `candidate_100001`–`candidate_200000` and `candidate_200001`–`candidate_300000`, respectively. To combine them, decompress and concatenate the parts in numerical order, retaining the header from the first part only.
 
-The complete screening report is distributed as `screening_all_300000.part001.csv.gz` through `screening_all_300000.part006.csv.gz`. To reconstruct a single report, decompress and concatenate these files in numerical order, retaining only the first header. All individual dataset files are smaller than 25,000,000 bytes.
+The complete screening report is distributed as `screening_all_300000.part001.csv.gz` through `screening_all_300000.part006.csv.gz`. To reconstruct a single report, decompress and concatenate these files in numerical order, retaining only the first header. 
