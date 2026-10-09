@@ -1,5 +1,6 @@
 # Electronically-Programmable-Multilayer-DNA-Storage
-# Mona Lisa DNA Fountain encoding and secondary-structure screening
+
+Mona Lisa DNA Fountain encoding and secondary-structure screening
 
 Version: 1.0.0
 
@@ -14,7 +15,7 @@ This dataset accompanies the Mona Lisa DNA-storage experiment and provides the o
 | `data/sequences/survivors_10163_encoded.fasta` | The 10,163 retained encoded segments, in increasing risk-score order. |
 | `data/sequences/final_5200_encoded.fasta` | Final 5,200 encoded segments (120 nt), used as decoder input. |
 | `data/sequences/final_5200_full_length.fasta` | Corresponding full-length oligonucleotide designs (180 nt), including the fixed flanking regions. |
-| `data/screening/screening_all_300000.csv.gz` | Complete screening results with candidate identifiers. |
+| `data/screening/screening_all_300000.part*.csv.gz` | Complete screening results with candidate identifiers. |
 | `data/screening/screening_final_5200.csv` | Screening metrics for the final library. |
 | `data/validation/` | Simulated reads, unique reads ordered by abundance and corresponding read counts. |
 | `code/screen_secondary_structure.py` | Secondary-structure screening implementation. |
@@ -80,10 +81,10 @@ python code/dna_fountain/encode.py --file_in data/input/mona_lisa.jpg --size 24 
 ### Select the final library from the screening report
 
 ```bash
-python code/select_from_report.py --report data/screening/screening_all_300000.csv.gz --target 5200 --out results/selected_5200.fasta
+python code/select_from_report.py --report "data/screening/screening_all_300000.part*.csv.gz" --target 5200 --out results/selected_5200.fasta
 ```
 
-This command reproduces selection from the supplied report without repeating structure prediction.
+This command reads all six report parts and reproduces selection without repeating structure prediction. Each part is an independently readable gzip-compressed CSV file with a header and 50,000 candidate records. Numerical part order preserves the original report order. Keep the glob pattern in quotation marks; the selection script expands it internally.
 
 ### Repeat secondary-structure screening
 
@@ -92,7 +93,7 @@ python -c "import gzip,shutil; shutil.copyfileobj(gzip.open('data/sequences/cand
 python code/screen_secondary_structure.py --input results/candidates.fasta --report results/screening.csv --selected-out results/selected.fasta --target 5200 --dna-param mathews2004 --workers 4
 ```
 
-For a preliminary check, add `--limit 20` to screen the first 20 candidates. Regenerated reports use the normalized candidate identifiers; their correspondence to the original identifiers is provided in `metadata/candidate_id_mapping.tsv.gz`.
+For a preliminary check, add `--limit 20` to screen the first 20 candidates. Regenerated reports use the normalized candidate identifiers; their correspondence to the original identifiers is provided in `metadata/candidate_id_mapping.part001.tsv.gz` through `metadata/candidate_id_mapping.part003.tsv.gz`.
 
 ### Decode the final library
 
@@ -124,3 +125,9 @@ The recovered image has SHA-256 checksum `b7d510972c41453b710c268762d4b267129b3c
 ## Code attribution
 
 DNA Fountain was developed by Yaniv Erlich and Dina Zielinski: https://github.com/TeamErlich/dna-fountain. The included Python 3 port credits Yihang Du, Wenrong Wu and Justin Brody. Its original documentation is provided in `code/dna_fountain/UPSTREAM_README.md`; the exact source revision is unavailable. The DNA Fountain code is distributed under GPLv3-or-later, with copyright notices and license text provided in `code/dna_fountain/COPYING` and the source files.
+
+## Partitioned data files
+
+The candidate mapping table is distributed as three independently readable gzip-compressed TSV files, each containing a header and 100,000 records. Parts 001, 002 and 003 cover `candidate_000001`–`candidate_100000`, `candidate_100001`–`candidate_200000` and `candidate_200001`–`candidate_300000`, respectively. To combine them, decompress and concatenate the parts in numerical order, retaining the header from the first part only.
+
+The complete screening report is distributed as `screening_all_300000.part001.csv.gz` through `screening_all_300000.part006.csv.gz`. To reconstruct a single report, decompress and concatenate these files in numerical order, retaining only the first header. All individual dataset files are smaller than 25,000,000 bytes.
